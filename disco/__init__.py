@@ -80,7 +80,19 @@ class Disco:
         elif fmt == "warc":
             frame = daft.read_warc(glob, **options)
         else:
-            raise ValueError(f"Unsupported format: {fmt}")
+            @daft.udf(return_dtype = daft.DataType.binary())
+            def read_blob(files: daft.Series):
+                output = []
+                for file in files.to_pylist():
+                    file = file.replace("file://", "")
+                    with open(file) as f:
+                        output.append(f.read())
+                return output
+
+            def read_blobs(path) -> daft.DataFrame:
+                return daft.from_glob_path(path).with_column("bytes", read_blob(daft.col("path")))
+            frame = read_blobs(glob)
+
 
         return Stage(self._catalog, frame)
 

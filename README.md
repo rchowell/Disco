@@ -66,4 +66,11 @@ we don't actually have a way to read in a text file, see https://github.com/Even
 ### Enhancements
 - `tokenize_encode` and `tokenize_decode` docs are not that great. I think adding some method overloading would help clean them up a bit.
 - `tokenize_encode` should return a fixedsizelist instead of a list.
+
+
+
+
+
+---
+
 - make jsonschema an extra dep
