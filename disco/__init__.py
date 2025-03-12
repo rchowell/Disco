@@ -35,7 +35,7 @@ class Disco:
             raise ValueError(f"Unsupported object type: {type(obj)}")
 
     def save(self, path: str):
-        self.catalog._save(path)
+        self._catalog._save(path)
 
     def read(self, path: str, **options) -> Stage:
         import daft
