@@ -1,6 +1,5 @@
-from abc import ABC, abstractmethod
-
 from disco.tokenizer import Tokenizer
+from disco.validator import Validator
 from disco.volume import Volume
 
 
@@ -15,16 +14,8 @@ class LSP:
         self.language = language
 
 
-class Validator(ABC):
-    def __init__(self, id: str, domain: str):
-        self.id = id
-        self.domain = domain
-
-    @abstractmethod
-    def validate(self) -> bool: ...
-
-
 __all__ = [
     "Tokenizer",
+    "Validator",
     "Volume",
 ]
