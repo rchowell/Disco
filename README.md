@@ -1,5 +1,13 @@
 # Project Disco
 
+## Development
+
+```python
+make venv   # source ./venv/activate
+make check  # run pre-commit lints
+make test   # run unit tests
+```
+
 ## Situation
 
 - We load heterogenous data sources such as..
@@ -14,7 +22,7 @@
 
 ## Problem
 
-Our routine jobs are built with one-off code that is often copy-pasted from previous jobs. This code has many a lot of magic strings and hardcoded paths which work well for the current state of things, however these jobs require our resources and services (volumes, models, LSPs) to remain unchanged else we have to update these hardcoded paths. This ultimately makes job maintenance difficult and we want to interface with our resources like we interact with our tables in our lakehouse. 
+Our routine jobs are built with one-off code that is often copy-pasted from previous jobs. This code has many a lot of magic strings and hardcoded paths which work well for the current state of things, however these jobs require our resources and services (volumes, models, LSPs) to remain unchanged else we have to update these hardcoded paths. This ultimately makes job maintenance difficult and we want to interface with our resources like we interact with our tables in our lakehouse.
 
 ## Links
 
@@ -24,4 +32,3 @@ Our routine jobs are built with one-off code that is often copy-pasted from prev
 ## Ideas
 
 - I like the idea of creating a code “semantic tree” by sending code to an LSP and getting back a detailed JSON tree with as much information as possible.
- 
