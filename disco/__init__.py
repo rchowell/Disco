@@ -16,7 +16,9 @@ class Disco:
         self.catalog = Catalog()
 
     def from_config(path_to_config: str) -> Disco:
-        pass
+        slf = Disco()
+        slf.catalog = Catalog._from_config(path_to_config)
+        return slf
 
     def mount(self, volume: str, location: str):
         v = Volume(volume, location)
@@ -35,6 +37,9 @@ class Disco:
             raise ValueError(f"Unsupported object type: {type(obj)}")
 
 
+    def save(self, path: str):
+        self.catalog._save(path)
+        
     def read(self, path: str, **options) -> DataFrame:
         if "://" not in path:
             raise ValueError("path must include volume name in format 'volume://glob'")
