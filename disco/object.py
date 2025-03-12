@@ -17,10 +17,6 @@ class Model:
         self.id = id
 
 
-class Tokenizer:
-    def __init__(self, id: str):
-        self.id = id
-
 
 class LSP:
     def __init__(self, id: str, language: str):
