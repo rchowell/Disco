@@ -32,3 +32,14 @@ Our routine jobs are built with one-off code that is often copy-pasted from prev
 ## Ideas
 
 - I like the idea of creating a code “semantic tree” by sending code to an LSP and getting back a detailed JSON tree with as much information as possible.
+
+
+
+## Issues/Feature Requests
+
+### Feature Requests
+we don't actually have a way to read in a text file, see https://github.com/Eventual-Inc/Daft/issues/2859
+
+### Enhancements
+- `tokenize_encode` and `tokenize_decode` docs are not that great. I think adding some method overloading would help clean them up a bit. 
+- `tokenize_encode` should return a fixedsizelist instead of a list.
