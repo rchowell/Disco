@@ -1,5 +1,11 @@
 # Project Disco
 
+Disco uses resource objects like volumes, models, and tokenizers to construct AI pipelines via composing stages.
+
+```python
+# todo
+```
+
 ## Development
 
 You can do `pytest -s -k <pattern>` to run a script and it will handle imports.
