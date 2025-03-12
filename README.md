@@ -2,6 +2,8 @@
 
 ## Development
 
+You can do `pytest -s -k <pattern>` to run a script and it will handle imports.
+
 ```python
 make venv   # source ./venv/activate
 make check  # run pre-commit lints
@@ -41,5 +43,5 @@ Our routine jobs are built with one-off code that is often copy-pasted from prev
 we don't actually have a way to read in a text file, see https://github.com/Eventual-Inc/Daft/issues/2859
 
 ### Enhancements
-- `tokenize_encode` and `tokenize_decode` docs are not that great. I think adding some method overloading would help clean them up a bit. 
+- `tokenize_encode` and `tokenize_decode` docs are not that great. I think adding some method overloading would help clean them up a bit.
 - `tokenize_encode` should return a fixedsizelist instead of a list.

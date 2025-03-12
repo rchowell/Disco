@@ -11,13 +11,13 @@ class Catalog:
         self.lsps: Dict[str, LSP] = {}
         self.validators: Dict[str, Validator] = {}
 
-    def get_volume(self, volume_id: str) -> Volume:
-        if volume_id not in self.volumes:
-            raise ValueError(f"Volume '{volume_id}' not found")
-        return self.volumes[volume_id]
+    def get_volume(self, name: str) -> Volume:
+        if name not in self.volumes:
+            raise ValueError(f"Volume '{name}' not found")
+        return self.volumes[name]
 
-    def put_volume(self, volume_id: str, volume: Volume) -> None:
-        self.volumes[volume_id] = volume
+    def put_volume(self, volume: Volume) -> None:
+        self.volumes[volume.name] = volume
 
     def get_model(self, model_id: str) -> Model:
         if model_id not in self.models:
