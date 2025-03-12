@@ -13,14 +13,14 @@ make test   # run unit tests
 ## Situation
 
 - We load heterogenous data sources such as..
-    - structured parquet and csv
-    - semi-structured html, json, and semantic trees (see **Ideas**)
-    - unstructured raw text
+  - structured parquet and csv
+  - semi-structured html, json, and semantic trees (see **Ideas**)
+  - unstructured raw text
 - Our team has common resources and services like..
-    - Volumes
-    - Models & Tokenizers
-    - LSPs
-    - Validators (i.e. JSON schema)
+  - Volumes
+  - Models & Tokenizers
+  - LSPs
+  - Validators (i.e. JSON schema)
 
 ## Problem
 
@@ -35,6 +35,21 @@ Our routine jobs are built with one-off code that is often copy-pasted from prev
 
 - I like the idea of creating a code “semantic tree” by sending code to an LSP and getting back a detailed JSON tree with as much information as possible.
 
+- pipelining of various objects on a dataset
+
+```py
+class MyValidator():
+    name = "my_validator"
+    ...
+class MyTokenizer():
+    name = "my_tokenizer"
+    ...
+class MyModel():
+    name = "my_model"
+    ...
+
+
+disco.read("pond://yellow.parquet").pipeline(["my_validator", "my_tokenizer", "my_model"])
 
 
 ## Issues/Feature Requests
@@ -45,3 +60,7 @@ we don't actually have a way to read in a text file, see https://github.com/Even
 ### Enhancements
 - `tokenize_encode` and `tokenize_decode` docs are not that great. I think adding some method overloading would help clean them up a bit.
 - `tokenize_encode` should return a fixedsizelist instead of a list.
+
+
+
+```
