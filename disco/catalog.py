@@ -1,7 +1,8 @@
 from typing import Dict
 
-from disco.object import LSP, Model, Tokenizer, Validator, Volume
 import toml
+
+from disco.object import LSP, Model, Tokenizer, Validator, Volume
 
 
 class Catalog:
@@ -60,14 +61,13 @@ class Catalog:
         return deserialize_catalog(filename)
 
 
-
 def serialize_catalog(catalog: Catalog, filename: str) -> None:
     data = {
         "volumes": {name: vol.__dict__ for name, vol in catalog.volumes.items()},
         "models": {id: model.__dict__ for id, model in catalog.models.items()},
         "tokenizers": {id: tok.__dict__ for id, tok in catalog.tokenizers.items()},
         "lsps": {id: lsp.__dict__ for id, lsp in catalog.lsps.items()},
-        "validators": {id: val.__dict__ for id, val in catalog.validators.items()}
+        "validators": {id: val.__dict__ for id, val in catalog.validators.items()},
     }
 
     with open(filename, "w") as f:
@@ -75,24 +75,24 @@ def serialize_catalog(catalog: Catalog, filename: str) -> None:
 
 
 def deserialize_catalog(filename: str) -> Catalog:
-    with open(filename, "r") as f:
+    with open(filename) as f:
         data = toml.load(f)
 
     catalog = Catalog()
 
-    for name, vol_data in data.get("volumes", {}).items():
+    for oid, vol_data in data.get("volumes", {}).items():
         catalog.put_volume(Volume(**vol_data))
 
-    for id, model_data in data.get("models", {}).items():
-        catalog.put_model(id, Model(**model_data))
+    for oid, model_data in data.get("models", {}).items():
+        catalog.put_model(oid, Model(**model_data))
 
-    for id, tok_data in data.get("tokenizers", {}).items():
-        catalog.put_tokenizer(id, Tokenizer(**tok_data))
+    for oid, tok_data in data.get("tokenizers", {}).items():
+        catalog.put_tokenizer(oid, Tokenizer(**tok_data))
 
-    for id, lsp_data in data.get("lsps", {}).items():
-        catalog.put_lsp(id, LSP(**lsp_data))
+    for oid, lsp_data in data.get("lsps", {}).items():
+        catalog.put_lsp(oid, LSP(**lsp_data))
 
-    for id, val_data in data.get("validators", {}).items():
-        catalog.put_validator(id, Validator(**val_data))
+    for oid, val_data in data.get("valoidators", {}).items():
+        catalog.put_validator(oid, Validator(**val_data))
 
     return catalog
