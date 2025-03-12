@@ -4,7 +4,7 @@ import daft
 from daft import DataFrame
 
 from disco.catalog import Catalog
-from disco.object import Volume
+from disco.object import Tokenizer, Volume
 
 import os
 
@@ -65,4 +65,7 @@ class Disco:
             raise ValueError(f"Unsupported format: {fmt}")
 
 
-__all__ = ["Disco"]
+__all__ = [
+    "Disco",
+    "Tokenizer",
+]
