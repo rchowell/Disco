@@ -4,7 +4,7 @@ import daft
 from daft import DataFrame
 
 from disco.catalog import Catalog
-from disco.object import Tokenizer, Volume
+from disco.object import Tokenizer, Volume, Model, LSP, Validator
 
 import os
 
@@ -21,6 +21,19 @@ class Disco:
     def mount(self, volume: str, location: str):
         v = Volume(volume, location)
         self.catalog.put_volume(v)
+
+    def put_object(self, name: str, obj: object):
+        if isinstance(obj, Tokenizer):
+            self.catalog.put_tokenizer(name, obj)
+        elif isinstance(obj, Model):
+            self.catalog.put_model(name, obj)
+        elif isinstance(obj, LSP):
+            self.catalog.put_lsp(obj)
+        elif isinstance(obj, Validator):
+            self.catalog.put_validator(obj)
+        else:
+            raise ValueError(f"Unsupported object type: {type(obj)}")
+
 
     def read(self, path: str, **options) -> DataFrame:
         if "://" not in path:
