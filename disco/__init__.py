@@ -13,6 +13,7 @@ class Disco:
     def __init__(self):
         self._catalog = Catalog()
 
+    @staticmethod
     def from_config(path_to_config: str) -> Disco:
         slf = Disco()
         slf.catalog = Catalog._from_config(path_to_config)

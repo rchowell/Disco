@@ -29,13 +29,13 @@ class Catalog:
     def put_model(self, model_id: str, model: Model) -> None:
         self.models[model_id] = model
 
-    def get_tokenizer(self, tokenizer_id: str) -> Tokenizer:
-        if tokenizer_id not in self.tokenizers:
-            raise ValueError(f"Tokenizer '{tokenizer_id}' not found")
-        return self.tokenizers[tokenizer_id]
+    def get_tokenizer(self, oid: str) -> Tokenizer:
+        if oid not in self.tokenizers:
+            raise ValueError(f"Tokenizer '{oid}' not found")
+        return self.tokenizers[oid]
 
-    def put_tokenizer(self, tokenizer_id: str, tokenizer: Tokenizer) -> None:
-        self.tokenizers[tokenizer_id] = tokenizer
+    def put_tokenizer(self, oid: str, tokenizer: Tokenizer) -> None:
+        self.tokenizers[oid] = tokenizer
 
     def get_lsp(self, lsp_id: str) -> LSP:
         if lsp_id not in self.lsps:
@@ -92,7 +92,7 @@ def deserialize_catalog(filename: str) -> Catalog:
     for oid, lsp_data in data.get("lsps", {}).items():
         catalog.put_lsp(oid, LSP(**lsp_data))
 
-    for oid, val_data in data.get("valoidators", {}).items():
+    for oid, val_data in data.get("validators", {}).items():
         catalog.put_validator(oid, Validator(**val_data))
 
     return catalog

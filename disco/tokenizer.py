@@ -1,11 +1,19 @@
-from abc import ABC
+from abc import ABC, abstractmethod
+
+from daft import DataType as dt
+from daft import Series, udf
+
 
 class Tokenizer(ABC):
-    def __init__(self, id: str):
-        self.id = id
+    @abstractmethod
+    def encode(self, input: str) -> list: ...
 
-    def encode(self, data: str) -> list:
-        ...
-    
-    def decode(self, data: list) -> str:
-        ...
+    @abstractmethod
+    def decode(self, input: list) -> str: ...
+
+    def encoder(self) -> object:
+        @udf(return_dtype=dt.list(dt.int64()))
+        def closure(series: Series):
+            return [self.encode(b) for b in series.to_pylist()]
+
+        return closure

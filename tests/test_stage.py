@@ -13,3 +13,6 @@ disco.read("pond://alice.text").stream().show()
 
 # read data with multiple columns
 disco.read("pond://yellow.parquet").stream("payment_type").show()
+
+# apply a transformation
+disco.read("pond://alice.text").stream().encode("gzip").show()
