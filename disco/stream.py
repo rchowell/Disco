@@ -92,7 +92,7 @@ class Stream:
         catalog = self._ctx._catalog
         encoder = None
         try:
-            encoder = catalog.get_tokenizer(codec).encoder()(col)
+            encoder = catalog.get_tokenizer(codec).make_encoder()(col)
         except ValueError:
             encoder = Expression.encode(col, codec)
         return self._map(encoder)

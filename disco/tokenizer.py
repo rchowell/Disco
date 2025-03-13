@@ -11,7 +11,7 @@ class Tokenizer(ABC):
     @abstractmethod
     def decode(self, input: bytes) -> any: ...
 
-    def encoder(self) -> object:
+    def make_encoder(self) -> object:
         @udf(return_dtype=dt.list(dt.int64()))
         def closure(series: Series):
             return [self.encode(b) for b in series.to_pylist()]

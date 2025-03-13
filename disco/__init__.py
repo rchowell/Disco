@@ -5,6 +5,7 @@ from daft import DataFrame
 from disco.stream import Stream, Context, read_stream, read_frame
 from disco.catalog import Catalog
 from disco.object import Tokenizer, Volume, Model, LSP, Validator
+import os
 
 
 class Disco:
@@ -22,6 +23,22 @@ class Disco:
     def mount(self, volume: str, location: str):
         v = Volume(volume, location)
         self._catalog.put_volume(v)
+
+    def ls(self, path: str) -> list[str]:
+        """List files in the given path by resolving the volume."""
+        abs_path = self.resolve(path)
+        if os.path.exists(abs_path):
+            if os.path.isdir(abs_path):
+                return [os.path.join(abs_path, f) for f in os.listdir(abs_path)]
+            else:
+                return [abs_path]
+        return []
+
+    def use_model(self, oid: str, model: Model):
+        self._catalog.put_model(oid, model)
+
+    def get_model(self, oid: str) -> Model:
+        return self._catalog.get_model(oid)
 
     def put_object(self, oid: str, obj: object):
         if isinstance(obj, Tokenizer):
@@ -58,7 +75,7 @@ class Disco:
         # resolve absolute glob using the volume
         glob = self.resolve(path)
         # build the dataframe using daft's read methods
-        return read_stream(glob, codec, **options)
+        return read_frame(glob, codec, **options)
 
 
 __all__ = [
