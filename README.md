@@ -58,6 +58,10 @@ class MyModel():
 disco.read("pond://yellow.parquet").pipeline(["my_validator", "my_tokenizer", "my_model"])
 ```
 
+## Future Deliverables
+
+- Make streams lazy and flatten, the problem is I want to read a bunch of gzipped files into a daft DataFrame using existing daft operators.
+
 ## Issues/Feature Requests
 
 ### Feature Requests
@@ -65,6 +69,7 @@ disco.read("pond://yellow.parquet").pipeline(["my_validator", "my_tokenizer", "m
 - we don't actually have a way to read in a text file, see https://github.com/Eventual-Inc/Daft/issues/2859
 - having `with_column` but prepend the column
 - support "gz" as a gzip codec alias
+- support reading things like `.csv.gz` or `.json.zstd`
 
 ### Enhancements
 

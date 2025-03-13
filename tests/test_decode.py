@@ -9,4 +9,4 @@ disco = Disco()
 disco.mount("pond", os.environ["POND"])
 
 # read data as a stream
-stream = disco.stream("pond://people/*.gz").decode("gzip")
+disco.stream("pond://people/*.gz").decode("gzip").show()

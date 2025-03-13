@@ -1,10 +1,10 @@
 from __future__ import annotations
 
-from disco.stream import Stream, Context, from_path
+from daft import DataFrame
+
+from disco.stream import Stream, Context, read_stream, read_frame
 from disco.catalog import Catalog
 from disco.object import Tokenizer, Volume, Model, LSP, Validator
-
-import os
 
 
 class Disco:
@@ -38,27 +38,27 @@ class Disco:
     def save(self, path: str):
         self._catalog._save(path)
 
-    def stream(self, path: str, codec: str | None = None) -> Stream:
+    def resolve(self, path: str) -> str:
         # volume prefix is required for now
         if "://" not in path:
             raise ValueError("path must include volume name e.g. 'volume://glob'")
         # get the volume
         volume_name, tail = path.split("://", 1)
         volume = self._catalog.get_volume(volume_name)
-        #
-        # use explicit format or infer
-        if codec is None:
-            _, ext = os.path.splitext(tail)
-            if ext:
-                codec = ext[1:]  # remove leading dot
-        #
         # resolve absolute glob using the volume
-        glob = volume.resolve(tail)
-        #
+        return volume.resolve(tail)
+
+    def stream(self, path: str, codec: str | None = None) -> Stream:
+        # resolve absolute glob using the volume
+        glob = self.resolve(path)
         # build the stream context and read a frame
-        ctx = Context(glob, codec, self._catalog)
-        #
-        return Stream(ctx, from_path(glob))
+        return read_stream(glob, codec, Context(glob, self._catalog))
+
+    def read(self, path: str, codec: str | None = None, **options) -> DataFrame:
+        # resolve absolute glob using the volume
+        glob = self.resolve(path)
+        # build the dataframe using daft's read methods
+        return read_stream(glob, codec, **options)
 
 
 __all__ = [

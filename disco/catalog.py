@@ -21,13 +21,13 @@ class Catalog:
     def put_volume(self, volume: Volume) -> None:
         self.volumes[volume.name] = volume
 
-    def get_model(self, model_id: str) -> Model:
-        if model_id not in self.models:
-            raise ValueError(f"Model '{model_id}' not found")
-        return self.models[model_id]
+    def get_model(self, oid: str) -> Model:
+        if oid not in self.models:
+            raise ValueError(f"Model '{oid}' not found")
+        return self.models[oid]
 
-    def put_model(self, model_id: str, model: Model) -> None:
-        self.models[model_id] = model
+    def put_model(self, oid: str, model: Model) -> None:
+        self.models[oid] = model
 
     def get_tokenizer(self, oid: str) -> Tokenizer:
         if oid not in self.tokenizers:

@@ -1,11 +1,16 @@
+from abc import ABC, abstractmethod
+
 from disco.tokenizer import Tokenizer
 from disco.validator import Validator
 from disco.volume import Volume
 
 
-class Model:
+class Model(ABC):
     def __init__(self, id: str):
         self.id = id
+
+    @abstractmethod
+    def classify(self, text: str, labels: list[str]) -> str: ...
 
 
 class LSP:
