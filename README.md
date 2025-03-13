@@ -1,45 +1,69 @@
 # Project Disco
 
+It's a party, and we only play daft.
+
+## Example
+
 Disco uses resource objects like volumes, models, and tokenizers to construct AI pipelines via composing stages.
 
 ```python
 # todo
 ```
 
-## Development
+## Background
 
-You can do `pytest -s -k <pattern>` to run a script and it will handle imports.
+This project was intended to position ourselves as the customer and push our tools to be better.
 
-```python
-make venv   # source ./venv/activate
-make check  # run pre-commit lints
-make test   # run unit tests
-```
-
-## Situation
+**Customer Situation**
 
 - We load heterogenous data sources such as..
   - structured parquet and csv
   - semi-structured html, json, and semantic trees (see **Ideas**)
   - unstructured raw text
 - Our team has common resources and services like..
-  - Volumes
+  - Volumes ... like S3 buckets
+  - Tables ... like Iceberg & DeltaLake
   - Models & Tokenizers
   - LSPs
-  - Validators (i.e. JSON schema)
+  - Validators .. like JSONSchema & Pydantic
 
-## Problem
+**Customer Problem**
 
-Our routine jobs are built with one-off code that is often copy-pasted from previous jobs. This code has many a lot of magic strings and hardcoded paths which work well for the current state of things, however these jobs require our resources and services (volumes, models, LSPs) to remain unchanged else we have to update these hardcoded paths. This ultimately makes job maintenance difficult and we want to interface with our resources like we interact with our tables in our lakehouse.
+Using these resources together requires many libraries an stitching things together with one-off code.
 
-## Links
+    Our routine jobs are built with one-off code that is often copy-pasted from previous jobs. This code has many magic strings and hardcoded paths which work well for the current state of things, however these jobs require our resources and services (volumes, models, LSPs) to remain unchanged else we have to update these hardcoded paths. This ultimately makes job maintenance difficult and we want to interface with our resources like we interact with our tables in our lakehouse. - Customer
 
-- https://github.com/rchowell/Disco
-- https://github.com/openai/tiktoken
+**Customer Ask**
 
-## Ideas
+> *We want to interface with our resources like we interact with our tables in our lakehouse*
 
+## Development
+
+You can do `pytest -s -k <pattern>` to run a script and it will handle imports.
+
+```shell
+make venv   # source ./venv/activate
+make check  # run pre-commit lints
+make test   # run unit tests
+```
+
+## Examples
+
+To run the examples, ensure the venv is activated.
+
+```shell
+uv pip install -e .
+python ./examples/text_stream_example.py
+```
+
+## Disco Ideas
+
+- make streams lazy and flatten, the problem is I want to read a bunch of gzipped files into a daft DataFrame using existing daft operators.
+- flatten streams to dataframes with concat
+- rename catalog to context or something
 - I like the idea of creating a code “semantic tree” by sending code to an LSP and getting back a detailed JSON tree with as much information as possible.
+- pipelining of various objects on a dataset
+- chunk a stream to be sent to an LLM in reasonable sizes
 
 ```py
 class MyValidator():
@@ -56,12 +80,6 @@ class MyModel():
 disco.read("pond://yellow.parquet").pipeline(["my_validator", "my_tokenizer", "my_model"])
 ```
 
-## Disco Request
-
-- make streams lazy and flatten, the problem is I want to read a bunch of gzipped files into a daft DataFrame using existing daft operators.
-- flatten streams to dataframes with concat
-- pipelining of various objects on a dataset
-
 ## Daft Requests
 
 - we don't actually have a way to read in a text file, see https://github.com/Eventual-Inc/Daft/issues/2859
@@ -71,3 +89,5 @@ disco.read("pond://yellow.parquet").pipeline(["my_validator", "my_tokenizer", "m
 - `tokenize_encode` and `tokenize_decode` docs are not that great. I think adding some method overloading would help clean them up a bit.
 - `tokenize_encode` should return a fixedsizelist instead of a list.
 - produce an output stream from a dataframe e.g. csv output stream
+- multi-column projections
+- why doesn't `col("a")["field"]` work?
