@@ -41,8 +41,6 @@ Our routine jobs are built with one-off code that is often copy-pasted from prev
 
 - I like the idea of creating a code “semantic tree” by sending code to an LSP and getting back a detailed JSON tree with as much information as possible.
 
-- pipelining of various objects on a dataset
-
 ```py
 class MyValidator():
     name = "my_validator"
@@ -58,20 +56,18 @@ class MyModel():
 disco.read("pond://yellow.parquet").pipeline(["my_validator", "my_tokenizer", "my_model"])
 ```
 
-## Future Deliverables
+## Disco Request
 
-- Make streams lazy and flatten, the problem is I want to read a bunch of gzipped files into a daft DataFrame using existing daft operators.
+- make streams lazy and flatten, the problem is I want to read a bunch of gzipped files into a daft DataFrame using existing daft operators.
+- flatten streams to dataframes with concat
+- pipelining of various objects on a dataset
 
-## Issues/Feature Requests
-
-### Feature Requests
+## Daft Requests
 
 - we don't actually have a way to read in a text file, see https://github.com/Eventual-Inc/Daft/issues/2859
 - having `with_column` but prepend the column
 - support "gz" as a gzip codec alias
 - support reading things like `.csv.gz` or `.json.zstd`
-
-### Enhancements
-
 - `tokenize_encode` and `tokenize_decode` docs are not that great. I think adding some method overloading would help clean them up a bit.
 - `tokenize_encode` should return a fixedsizelist instead of a list.
+- produce an output stream from a dataframe e.g. csv output stream
