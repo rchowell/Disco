@@ -12,11 +12,11 @@ class o200k_base(Tokenizer):
     def __init__(self):
         self._encoding = tiktoken.get_encoding("o200k_base")
 
-    def encode(self, data: str) -> list:
-        return self._encoding.encode(data)
+    def encode(self, input: bytes) -> any:
+        return self._encoding.encode(str(input))
 
-    def decode(self, data: list) -> str:
-        return self._encoding.decode(data)
+    def decode(self, input: any) -> bytes:
+        return self._encoding.decode(input)
 
 
 # initalize a disco instance

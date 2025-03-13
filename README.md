@@ -64,6 +64,7 @@ disco.read("pond://yellow.parquet").pipeline(["my_validator", "my_tokenizer", "m
 
 - we don't actually have a way to read in a text file, see https://github.com/Eventual-Inc/Daft/issues/2859
 - having `with_column` but prepend the column
+- support "gz" as a gzip codec alias
 
 ### Enhancements
 

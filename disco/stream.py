@@ -62,7 +62,8 @@ class Stream:
         return self._map(encoder)
 
     def decode(self, codec: str) -> Stream:
-        return self._map(Expression.decode(self._col, codec))
+        col = self._ctx._col
+        return self._map(Expression.decode(col, codec))
 
     def raw(self) -> bytes:
         raise ValueError("Returning raw byte stream not supported.")
