@@ -83,7 +83,7 @@ disco.read("pond://yellow.parquet").pipeline(["my_validator", "my_tokenizer", "m
 ## Daft Requests
 
 - we don't actually have a way to read in a text file, see https://github.com/Eventual-Inc/Daft/issues/2859
-- having `with_column` but prepend the column
+- having `with_column` but prepend the column -- +1
 - support "gz" as a gzip codec alias
 - support reading things like `.csv.gz` or `.json.zstd`
 - `tokenize_encode` and `tokenize_decode` docs are not that great. I think adding some method overloading would help clean them up a bit.
@@ -93,3 +93,8 @@ disco.read("pond://yellow.parquet").pipeline(["my_validator", "my_tokenizer", "m
 - why doesn't `col("a")["field"]` work?
 - produce a dataframe, where each line is an entry, from compressed logs is a bit difficult
 - count uses the name of the argument which means I'm forced to alias it. `Due to: DaftError::ValueError Attempting to make a Schema with duplicate field names: url`
+- running a classifier on a column is painfully slow and unintuitive via udfs. It'd be nice to have a way to natively run classifiers.
+- from a json column, there is no easy way to extract that in to a specified datatype. (polars has `.json_extract`)
+- read_text and read_blob functions
+- column selectors would be huge. for example when expanding a struct field, there's no way to do `select(col("struct").struct.get("*"), col("*", exclude=["struct"]))`
+- meta functions on exprs, such as getting fields from `struct` 
