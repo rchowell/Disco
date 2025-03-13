@@ -29,4 +29,4 @@ disco.mount("pond", os.environ["POND"])
 disco.put_object("o200k_base", o200k_base())
 
 # apply the tokenizer
-disco.read("pond://alice.text").stream().encode("o200k_base").show()
+disco.stream("pond://alice.text").encode("o200k_base").show()

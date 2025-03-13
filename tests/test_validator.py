@@ -1,5 +1,6 @@
+from pydantic import BaseModel
+
 from disco.object import Validator
-from pydantic import BaseModel, PositiveInt
 
 
 def test_json_schema_validator():
@@ -53,7 +54,6 @@ def test_pydantic_validator():
         first_name: str
         last_name: str
         age: int
-        
+
     validator = Validator.from_pydantic_model(Person)
     assert validator.validate({"first_name": "John", "last_name": "Doe", "age": 21})
-    

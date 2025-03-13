@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from disco.stage import Stage
+from disco.stream import Stream, Context, from_path
 from disco.catalog import Catalog
 from disco.object import Tokenizer, Volume, Model, LSP, Validator
 
@@ -38,64 +38,27 @@ class Disco:
     def save(self, path: str):
         self._catalog._save(path)
 
-    def read(self, path: str, **options) -> Stage:
-        import daft
-
+    def stream(self, path: str, codec: str | None = None) -> Stream:
+        # volume prefix is required for now
         if "://" not in path:
-            raise ValueError("path must include volume name in format 'volume://glob'")
-
+            raise ValueError("path must include volume name e.g. 'volume://glob'")
         # get the volume
         volume_name, tail = path.split("://", 1)
         volume = self._catalog.get_volume(volume_name)
-
+        #
         # use explicit format or infer
-        fmt = options.pop("format", None)
-        if fmt is None:
+        if codec is None:
             _, ext = os.path.splitext(tail)
             if ext:
-                fmt = ext[1:]  # remove leading dot
-
+                codec = ext[1:]  # remove leading dot
+        #
         # resolve absolute glob using the volume
         glob = volume.resolve(tail)
-
-        # read into a daft DataFrame
-        frame = None
-        if fmt == "csv":
-            frame = daft.read_csv(glob, **options)
-        if fmt == "txt" or fmt == "text":
-            frame = daft.read_csv(glob, delimiter="¦", has_headers=False).select(daft.col("column_1").alias("text"))
-        elif fmt == "parquet":
-            frame = daft.read_parquet(glob, **options)
-        elif fmt == "json" or fmt == "jsonl":
-            frame = daft.read_json(glob, **options)
-        elif fmt == "delta":
-            frame = daft.read_deltalake(glob, **options)
-        elif fmt == "hudi":
-            frame = daft.read_hudi(glob, **options)
-        elif fmt == "iceberg":
-            frame = daft.read_iceberg(glob, **options)
-        elif fmt == "sql":
-            frame = daft.read_sql(glob, **options)
-        elif fmt == "lance":
-            frame = daft.read_lance(glob, **options)
-        elif fmt == "warc":
-            frame = daft.read_warc(glob, **options)
-        else:
-            @daft.udf(return_dtype = daft.DataType.binary())
-            def read_blob(files: daft.Series):
-                output = []
-                for file in files.to_pylist():
-                    file = file.replace("file://", "")
-                    with open(file) as f:
-                        output.append(f.read())
-                return output
-
-            def read_blobs(path) -> daft.DataFrame:
-                return daft.from_glob_path(path).with_column("bytes", read_blob(daft.col("path")))
-            frame = read_blobs(glob)
-
-
-        return Stage(self._catalog, frame)
+        #
+        # build the stream context and read a frame
+        ctx = Context(glob, codec, self._catalog)
+        #
+        return Stream(ctx, from_path(glob))
 
 
 __all__ = [
