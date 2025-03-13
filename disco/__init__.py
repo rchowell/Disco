@@ -20,6 +20,10 @@ class Disco:
         slf.catalog = Catalog._from_config(path_to_config)
         return slf
 
+    ###
+    # volumes
+    ###
+
     def mount(self, volume: str, location: str):
         v = Volume(volume, location)
         self._catalog.put_volume(v)
@@ -34,22 +38,43 @@ class Disco:
                 return [abs_path]
         return []
 
+    def resolve(self, path: str) -> str:
+        # volume prefix is required for now
+        if "://" not in path:
+            raise ValueError("path must include volume name e.g. 'volume://glob'")
+        # get the volume
+        volume_name, tail = path.split("://", 1)
+        volume = self._catalog.get_volume(volume_name)
+        # resolve absolute glob using the volume
+        return volume.resolve(tail)
+
+    ###
+    # models
+    ###
+
     def use_model(self, oid: str, model: Model):
         self._catalog.put_model(oid, model)
 
     def get_model(self, oid: str) -> Model:
         return self._catalog.get_model(oid)
 
-    def create_grammar(self, language: str) -> Grammar:
-        grammar = Grammar(language)
-        self.use_grammar(language, grammar)
-        return grammar
+    def create_classifier(self, model: str, labels: list[str]) -> object:
+        return self.get_model(model)._make_classifier(labels)
+
+    ###
+    # grammars
+    ###
 
     def use_grammar(self, oid: str, grammar: Grammar):
         self._catalog.put_grammar(oid, grammar)
 
     def get_grammar(self, oid: str) -> Model:
         return self._catalog.get_grammar(oid)
+
+    def create_grammar(self, language: str) -> Grammar:
+        grammar = Grammar(language)
+        self.use_grammar(language, grammar)
+        return grammar
 
     def put_object(self, oid: str, obj: object):
         if isinstance(obj, Tokenizer):
@@ -65,16 +90,6 @@ class Disco:
 
     def save(self, path: str):
         self._catalog._save(path)
-
-    def resolve(self, path: str) -> str:
-        # volume prefix is required for now
-        if "://" not in path:
-            raise ValueError("path must include volume name e.g. 'volume://glob'")
-        # get the volume
-        volume_name, tail = path.split("://", 1)
-        volume = self._catalog.get_volume(volume_name)
-        # resolve absolute glob using the volume
-        return volume.resolve(tail)
 
     def stream(self, path: str, codec: str | None = None) -> Stream:
         # resolve absolute glob using the volume

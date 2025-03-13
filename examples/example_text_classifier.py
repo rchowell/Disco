@@ -23,17 +23,17 @@ disco = Disco()
 # 2. mount a volume
 disco.mount("comments", os.environ["POND"] + "/comments")
 
-# 3. Use the HF model "facebook/bart-large-mnli" with zero-shot-classification.
+# 3. use the HF model "facebook/bart-large-mnli" with zero-shot-classification.
 disco.use_model("bart", model=HuggingFaceModel.zero_shot_classification("facebook/bart-large-mnli"))
 
-# 3.5 create a daft user-defined "classifier" function from the model.
-classify = disco.get_model("bart")._make_classifier(["happy", "neutral", "sad"])
+# 3.5 create a daft "classifier" function from the model.
+classifier = disco.create_classifier("bart", labels=["happy", "neutral", "sad"])
 
-# 4. read the reviews as a csv
+# 4. read the reviews from a csv
 df = disco.read("comments://pizza_reviews.csv")
 
 # 5. classify each review, appending a 'sentiment' column.
-df = df.with_column("sentiment", classify(col("message")))
+df = df.with_column("sentiment", classifier(col("message")))
 
 # 6. write the csv (or show)
 df.show()

@@ -6,7 +6,7 @@ Setup:
 
 Goal:
 
-    We want to extract
+    We want to extract the function names into a DataFrame.
 
 """
 
