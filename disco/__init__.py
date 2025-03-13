@@ -4,7 +4,7 @@ from daft import DataFrame
 
 from disco.stream import Stream, Context, read_stream, read_frame
 from disco.catalog import Catalog
-from disco.object import Tokenizer, Volume, Model, LSP, Validator
+from disco.object import Tokenizer, Volume, Model, Grammar, Validator
 import os
 
 
@@ -40,12 +40,23 @@ class Disco:
     def get_model(self, oid: str) -> Model:
         return self._catalog.get_model(oid)
 
+    def create_grammar(self, language: str) -> Grammar:
+        grammar = Grammar(language)
+        self.use_grammar(language, grammar)
+        return grammar
+
+    def use_grammar(self, oid: str, grammar: Grammar):
+        self._catalog.put_grammar(oid, grammar)
+
+    def get_grammar(self, oid: str) -> Model:
+        return self._catalog.get_grammar(oid)
+
     def put_object(self, oid: str, obj: object):
         if isinstance(obj, Tokenizer):
             self._catalog.put_tokenizer(oid, obj)
         elif isinstance(obj, Model):
             self._catalog.put_model(oid, obj)
-        elif isinstance(obj, LSP):
+        elif isinstance(obj, Grammar):
             self._catalog.put_lsp(obj)
         elif isinstance(obj, Validator):
             self._catalog.put_validator(obj)

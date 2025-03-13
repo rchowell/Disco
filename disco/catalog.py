@@ -2,7 +2,7 @@ from typing import Dict
 
 import toml
 
-from disco.object import LSP, Model, Tokenizer, Validator, Volume
+from disco.object import Grammar, Model, Tokenizer, Validator, Volume
 
 
 class Catalog:
@@ -10,7 +10,7 @@ class Catalog:
         self.volumes: Dict[str, Volume] = {}
         self.models: Dict[str, Model] = {}
         self.tokenizers: Dict[str, Tokenizer] = {}
-        self.lsps: Dict[str, LSP] = {}
+        self.grammars: Dict[str, Grammar] = {}
         self.validators: Dict[str, Validator] = {}
 
     def get_volume(self, name: str) -> Volume:
@@ -37,13 +37,13 @@ class Catalog:
     def put_tokenizer(self, oid: str, tokenizer: Tokenizer) -> None:
         self.tokenizers[oid] = tokenizer
 
-    def get_lsp(self, lsp_id: str) -> LSP:
-        if lsp_id not in self.lsps:
-            raise ValueError(f"LSP '{lsp_id}' not found")
-        return self.lsps[lsp_id]
+    def get_grammar(self, oid: str) -> Grammar:
+        if oid not in self.grammars:
+            raise ValueError(f"Grammar '{oid}' not found")
+        return self.grammars[oid]
 
-    def put_lsp(self, lsp_id: str, lsp: LSP) -> None:
-        self.lsps[lsp_id] = lsp
+    def put_grammar(self, oid: str, grammar: Grammar) -> None:
+        self.grammars[oid] = grammar
 
     def get_validator(self, validator_id: str) -> Validator:
         if validator_id not in self.validators:
@@ -66,7 +66,7 @@ def serialize_catalog(catalog: Catalog, filename: str) -> None:
         "volumes": {name: vol.__dict__ for name, vol in catalog.volumes.items()},
         "models": {id: model.__dict__ for id, model in catalog.models.items()},
         "tokenizers": {id: tok.__dict__ for id, tok in catalog.tokenizers.items()},
-        "lsps": {id: lsp.__dict__ for id, lsp in catalog.lsps.items()},
+        "grammars": {id: grammar.__dict__ for id, grammar in catalog.grammars.items()},
         "validators": {id: val.__dict__ for id, val in catalog.validators.items()},
     }
 
@@ -89,8 +89,8 @@ def deserialize_catalog(filename: str) -> Catalog:
     for oid, tok_data in data.get("tokenizers", {}).items():
         catalog.put_tokenizer(oid, Tokenizer(**tok_data))
 
-    for oid, lsp_data in data.get("lsps", {}).items():
-        catalog.put_lsp(oid, LSP(**lsp_data))
+    for oid, grammar_data in data.get("grammars", {}).items():
+        catalog.put_grammar(oid, Grammar(**grammar_data))
 
     for oid, val_data in data.get("validators", {}).items():
         catalog.put_validator(oid, Validator(**val_data))
