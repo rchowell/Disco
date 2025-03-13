@@ -27,7 +27,7 @@ disco.mount("comments", os.environ["POND"] + "/comments")
 disco.use_model("bart", model=HuggingFaceModel.zero_shot_classification("facebook/bart-large-mnli"))
 
 # 3.5 create a daft user-defined "classifier" function from the model.
-classify = disco.get_model("bart").make_classifier(["happy", "neutral", "sad"])
+classify = disco.get_model("bart")._make_classifier(["happy", "neutral", "sad"])
 
 # 4. read the reviews as a csv
 df = disco.read("comments://pizza_reviews.csv")

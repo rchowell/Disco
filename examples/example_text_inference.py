@@ -15,6 +15,7 @@ Goal:
 import os
 
 from disco import Disco
+from disco.model.__openai import OpenAIModel
 from disco.stream import Transform
 
 # 1. initalize a disco instance
@@ -29,12 +30,20 @@ stream = disco.stream("pond://stories/*.txt")
 
 # 4. write our transform on the unstructured data
 class ExtractCharacters(Transform):
+    def __init__(self):
+        self._model = OpenAIModel.inferencer(
+            model="gpt-4o-mini",
+            prompt="Please return the names of the characters mentioned in this short story as a comma-separated list with NO additional output",
+        )
+
     def type(self) -> dict[str, type]:
         return {"characters": list[str]}
 
     def apply(self, stream: bytes, metadata: dict[str, any] | None) -> dict:
-        # TODO call the LLM
-        return {"characters": ["alice", "nemo"]}
+        story = stream.decode()
+        characters_csv = self._model.infer(story)
+        characters = [name.strip() for name in characters_csv.split(",")]
+        return {"characters": characters}
 
 
 # 5. apply transform to the stream to produce a dataframe
