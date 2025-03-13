@@ -91,3 +91,5 @@ disco.read("pond://yellow.parquet").pipeline(["my_validator", "my_tokenizer", "m
 - produce an output stream from a dataframe e.g. csv output stream
 - multi-column projections
 - why doesn't `col("a")["field"]` work?
+- produce a dataframe, where each line is an entry, from compressed logs is a bit difficult
+- count uses the name of the argument which means I'm forced to alias it. `Due to: DaftError::ValueError Attempting to make a Schema with duplicate field names: url`

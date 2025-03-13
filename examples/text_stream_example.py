@@ -33,8 +33,12 @@ class ExtractCharacters(Transform):
         return {"characters": list[str]}
 
     def apply(self, stream: bytes, metadata: dict[str, any] | None) -> dict:
+        # TODO call the LLM
         return {"characters": ["alice", "nemo"]}
 
 
-# 5. apply to the stream
-stream.transform(ExtractCharacters()).show()
+# 5. apply transform to the stream to produce a dataframe
+df = stream.transform(ExtractCharacters())
+
+# 6. select distinct characters
+df.explode("characters").distinct().show()

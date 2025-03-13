@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+import re
 from abc import ABC, abstractmethod
 
 import daft
@@ -132,20 +133,57 @@ class Stream:
             return [transform.apply(v, None) for v in series.to_pylist()]
 
         # invoke the transform on bytes, collecting additional metadata (todo)
-        rc = daft.col("row")
         df = self._frame.select(_func(self._ctx._col).alias("row"))
-        # project out all the struct fields for multi-column projectionpfor
+        # project out all the struct fields for multi-column projections
+        rc = daft.col("row")
         return df.select(*[rc.struct.get(field) for field in typ_.keys()])
 
     def raw(self) -> bytes:
         raise ValueError("Returning raw byte stream not supported.")
 
-    def read(self, **options) -> DataFrame:
+    def read(self, mime: str | None = None, **options) -> DataFrame:
         """Read the stream bytes as a daft frame."""
-        return read_frame(self._ctx._glob, self._mime, **options)
+        return read_frame(self._ctx._glob, mime or self._mime, **options)
+
+    def read_lines(self) -> DataFrame:
+        curr: DataFrame = None
+        for row in self._frame.select(self._ctx._col).collect():
+            frame = daft.from_pydict({"line": row["bytes"].decode().splitlines()})
+            if curr:
+                curr = curr.concat(frame)
+            else:
+                curr = frame
+        return curr
 
     def parse(self, pattern: str) -> DataFrame:
-        raise ValueError("Parsing not yet supported.")
+        """Parse each blob on the pattern to return a DataFrame."""
+        regx = re.compile(pattern)
+        dicts = []
+        for row in self._frame.select(self._ctx._col).collect():
+            body = row["bytes"].decode()
+            match_ = regx.search(body)
+            if match_:
+                dicts.append(match_.groupdict())
+        return daft.from_pylist(dicts)
+
+    def parse_lines(self, pattern: str) -> DataFrame:
+        """Parse each line on the pattern to return a DataFrame."""
+        regx = re.compile(pattern)
+        curr: DataFrame = None
+        for row in self._frame.select(self._ctx._col).collect():
+            # parse each regex
+            lines = row["bytes"].decode().splitlines()
+            dicts = []
+            for line in lines:
+                match_ = regx.search(line)
+                if match_:
+                    dicts.append(match_.groupdict())
+            frame = daft.from_pylist(dicts)
+            if curr:
+                curr = curr.concat(frame)
+            else:
+                curr = frame
+        return curr
 
     def show(self):
         self._frame.show()
