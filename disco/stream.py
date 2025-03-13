@@ -7,6 +7,7 @@ from abc import ABC, abstractmethod
 import daft
 from daft import DataFrame, Expression, Series, udf
 from daft import DataType as dt
+from daft.expressions.expressions import ExpressionImageNamespace
 
 from disco.catalog import Catalog
 
@@ -87,9 +88,9 @@ class Stream:
         self._mime = mime
         self._frame = frame
 
-    def _transform(self, codec: str, expr: Expression) -> Stream:
+    def _apply(self, codec: str, expr: Expression) -> Stream:
         """Apply some stream transformation."""
-        frame = self._frame.select(expr.alias("bytes"))
+        frame = self._frame.with_column("bytes", expr)
         return Stream(self._ctx, codec, frame)
 
     def encode(self, codec: str) -> Stream:
@@ -101,7 +102,7 @@ class Stream:
             encoder = catalog.get_tokenizer(codec).make_encoder()(col)
         except ValueError:
             encoder = Expression.encode(col, codec)
-        return self._transform(codec, encoder)
+        return self._apply(codec, encoder)
 
     def decode(self, codec: str) -> Stream:
         """Decode this stream using the tokenizer or codec."""
@@ -111,8 +112,11 @@ class Stream:
         try:
             decoder = catalog.get_tokenizer(codec).make_decoder()(col)
         except ValueError:
-            decoder = Expression.decode(col, codec)
-        return self._transform(codec, decoder)
+            if codec.startswith("image"):
+                decoder = ExpressionImageNamespace.decode(col)
+            else:
+                decoder = Expression.decode(col, codec)
+        return self._apply(codec, decoder)
 
     def map(self, f) -> DataFrame:
         """Apply the mapping function to produce a DataFrame."""
@@ -138,8 +142,8 @@ class Stream:
         rc = daft.col("row")
         return df.select(*[rc.struct.get(field) for field in typ_.keys()])
 
-    def raw(self) -> bytes:
-        raise ValueError("Returning raw byte stream not supported.")
+    def frame(self) -> DataFrame:
+        return self._frame
 
     def read(self, mime: str | None = None, **options) -> DataFrame:
         """Read the stream bytes as a daft frame."""

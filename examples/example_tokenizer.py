@@ -1,3 +1,14 @@
+"""TOKENIZE TEXT INPUTS DEMO.
+
+Setup:
+
+    We have a short story as raw text.
+
+Goal:
+
+    We want to tokenize this information.
+"""
+
 import os
 
 import tiktoken

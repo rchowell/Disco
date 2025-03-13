@@ -5,17 +5,16 @@ from abc import ABC, abstractmethod
 
 from jsonschema.protocols import Validator as _JsonSchemaValidator
 from jsonschema.validators import validator_for as _json_validator_for
-from pydantic import BaseModel, PositiveInt
+from pydantic import BaseModel
 
-from typing import Type
 
 class Validator(ABC):
     @staticmethod
     def from_json_schema(schema: str) -> Validator:
         return JsonSchemaValidator.from_str(schema)
-        
+
     @staticmethod
-    def from_pydantic_model(model: Type[BaseModel]) -> Validator:
+    def from_pydantic_model(model: type[BaseModel]) -> Validator:
         return PydanticValidator(model)
 
     @abstractmethod
@@ -51,19 +50,19 @@ class JsonSchemaValidator:
         errors = list(self._validator.iter_errors(document))
         return len(errors) == 0
 
+
 class PydanticValidator(Validator):
-    
-    def __init__(self, model: Type[BaseModel]):
+    def __init__(self, model: type[BaseModel]):
         self.model = model
-        
+
     def validate(self, input: object) -> bool:
         try:
             self.model.model_validate(input)
             return True
-        except Exception as e:
+        except Exception:
             return False
-        
-    
+
+
 __all__ = [
     "Validator",
 ]

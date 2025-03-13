@@ -97,4 +97,7 @@ disco.read("pond://yellow.parquet").pipeline(["my_validator", "my_tokenizer", "m
 - from a json column, there is no easy way to extract that in to a specified datatype. (polars has `.json_extract`)
 - read_text and read_blob functions
 - column selectors would be huge. for example when expanding a struct field, there's no way to do `select(col("struct").struct.get("*"), col("*", exclude=["struct"]))`
-- meta functions on exprs, such as getting fields from `struct` 
+- ^ in partiql we had a struct pivot (like a spread) https://partiql.org/concepts/paths.html#_wildcard_steps
+- meta functions on exprs, such as getting fields from `struct`
+- tutorial on working with images (or mayabe I havent found it..)
+- reference functions allows us to pass them around for higher patterns, and `from daft.expressions.expressions import ExpressionImageNamespace` is not ideal.

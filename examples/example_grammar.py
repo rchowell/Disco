@@ -28,16 +28,16 @@ disco.create_grammar("python")
 stream = disco.stream("pond://code/python/*.py")
 
 
-# 4. create a stream transform backed by an LSP
+# 4. create a stream transform backed by a grammar
 class ListFunctionsTransform(Transform):
     def __init__(self):
-        self._lsp = disco.get_grammar("python")
+        self._grammar = disco.get_grammar("python")
 
     def type(self) -> dict[str, type]:
         return {"functions": list[str]}
 
     def apply(self, stream: bytes, metadata: dict[str, any] | None) -> dict:
-        return {"functions": self._lsp.list_functions(stream)}
+        return {"functions": self._grammar.list_functions(stream)}
 
 
 # 5. apply transform to the stream to produce a dataframe
