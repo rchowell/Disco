@@ -41,4 +41,4 @@ sess.sql("""
     SELECT url, count(*) AS requests FROM logs
     GROUP BY url
     ORDER BY requests DESC
-""").collect().show()
+""").show()

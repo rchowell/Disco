@@ -156,7 +156,7 @@ class Stream:
         return curr
 
     def parse(self, pattern: str) -> DataFrame:
-        """Parse each blob on the pattern to return a DataFrame."""
+        """Parse each blob on the pattern, convert the first result to a row in the DataFrame."""
         regx = re.compile(pattern)
         dicts = []
         for row in self._frame.select(self._ctx._col).collect():
@@ -165,6 +165,23 @@ class Stream:
             if match_:
                 dicts.append(match_.groupdict())
         return daft.from_pylist(dicts)
+
+    def parse_all(self, pattern: str) -> DataFrame:
+        """Parse each blob on the pattern, convert all results to rows in the DataFrame."""
+        regx = re.compile(pattern)
+        curr: DataFrame = None
+        for row in self._frame.select(self._ctx._col).collect():
+            # parse each regex
+            body = row["bytes"].decode()
+            dicts = []
+            for match_ in regx.finditer(body):
+                dicts.append(match_.groupdict())
+            frame = daft.from_pylist(dicts)
+            if curr is None:
+                curr = frame
+            else:
+                curr = curr.concat(frame)
+        return curr
 
     def parse_lines(self, pattern: str) -> DataFrame:
         """Parse each line on the pattern to return a DataFrame."""
@@ -179,10 +196,10 @@ class Stream:
                 if match_:
                     dicts.append(match_.groupdict())
             frame = daft.from_pylist(dicts)
-            if curr:
-                curr = curr.concat(frame)
-            else:
+            if curr is None:
                 curr = frame
+            else:
+                curr = curr.concat(frame)
         return curr
 
     def show(self):
