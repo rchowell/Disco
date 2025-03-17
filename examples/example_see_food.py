@@ -2,10 +2,10 @@
 
 Setup:
 
+    We will label photos as HOT DOG or NOT HOT DOG.
+
     - Question for you, what is better the octopus recipe?
     - Answer for you, eight recipes for octopus.
-
-    We will label photos as HOT DOG or NOT HOT DOG.
 
 Goal:
 
@@ -43,8 +43,6 @@ classifier = disco.create_classifier(model="clip", labels=["hot dog", "not hot d
 
 # 5. read the images as a stream then decode into daft Image type
 stream = disco.stream("pond://food/10/**/*.jpg").decode("image/jpeg")
-
-# stream.show()
 
 # 6. label the images
 df = stream.frame().with_column("kind", classifier(col("bytes")))

@@ -22,4 +22,4 @@ class HuggingFaceModel(Model):
         return m
 
     def classify(self, text: str, labels: list[str]) -> str:
-        return self._pipeline(text, labels)["labels"][0]
+        return self._pipeline(text, candidate_labels=labels)["labels"][0]
